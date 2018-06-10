@@ -1,0 +1,223 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <windows.h>
+
+
+void opis();
+void next();
+void cd(int v[], int z, int m, int n);
+int main(){
+
+
+    int m, n;
+    int i, j, k;
+    int tasma[100];
+    int stan = 0;
+    int poz = 0;
+    int s=0;
+    opis();
+
+
+    printf("\nPodaj dwie liczby:");
+    scanf("%d %d", &m, &n);
+
+//tworzenie tasmy
+    for(i = 0; i < m; i++)
+         tasma[i] = 0;
+
+    tasma[m] = 1;
+
+    for(j = m+1; j < m+n+1; j++)
+          tasma[j] = 0;
+
+    for(i=m+n+1;i<m+n+1+20;i++)
+         tasma[i] = 8;
+
+
+    printf("\nTasma wejsciowa dla wczytanych liczb: ");
+    for(k = 0; k < m+n+1; k++)
+        printf("%d", tasma[k]);
+    //printf("...");
+
+    printf("\nOpis chwilowy:\n");
+
+    //dla stanu zerowego
+    printf("(q0)");
+    for(k=0; k<m+n+1; k++){
+
+            printf("%d",tasma[k]);
+        }
+        next();
+
+
+    for(;;){
+                if(stan==0){
+                             if(tasma[poz] == 0){
+                                            tasma[poz] = 8; //pusty
+                                            stan = 1; //stan q1
+                                            poz += 1; //przechodzimy w prawo
+                                          }
+                             else if(tasma[poz] == 1){
+                                             tasma[poz] = 8;
+                                             stan = 5;
+                                             poz += 1;
+                                            }
+                            }
+                 else if(stan==1){
+                             if(tasma[poz] == 0){
+                                            tasma[poz] = 0;
+                                            stan = 1;
+                                            poz += 1;
+                                          }
+                             else if(tasma[poz] == 1){
+                                             tasma[poz] = 1;
+                                             stan = 2;
+                                             poz += 1;
+                                            }
+                            }
+                 else if(stan==2){
+                             if(tasma[poz] == 0){
+                                            tasma[poz] = 1;
+                                            stan = 3;
+                                            poz -= 1;
+                                          }
+                             else if(tasma[poz] == 1){
+                                             tasma[poz] = 1;
+                                             stan = 2;
+                                             poz += 1;
+                                            }
+                             else if(tasma[poz] == 8){
+                                          tasma[poz] = 8;
+                                          stan = 4;
+                                          poz -= 1;
+                                          }
+                            }
+                 else if(stan==3){
+                             if(tasma[poz] == 0){
+                                            tasma[poz] = 0;
+                                            stan = 3;
+                                            poz -= 1;
+                                          }
+                             else if(tasma[poz] == 1){
+                                             tasma[poz] = 1;
+                                             stan = 3;
+                                             poz -= 1;
+                                            }
+                             else if(tasma[poz] == 8){
+                                            tasma[poz] = 8;
+                                            stan = 0;
+                                            poz += 1;
+                                          }
+                            }
+                 else if(stan==4){
+                             if(tasma[poz] == 0){
+                                            tasma[poz] = 0;
+                                            stan = 4;
+                                            poz -= 1;
+                                          }
+                             else if(tasma[poz] == 1){
+                                             tasma[poz] = 8;
+                                             stan = 4;
+                                             poz -= 1;
+                                            }
+                             else if(tasma[poz] == 8){
+                                          tasma[poz] = 0;
+                                          stan = 6;
+                                          poz += 1;
+                                          }
+                            }
+                 else if(stan==5){
+                             if(tasma[poz] == 0){
+                                            tasma[poz] = 8;
+                                            stan = 5;
+                                            poz += 1;
+                                          }
+                             else if(tasma[poz] == 1){
+                                             tasma[poz] = 8;
+                                             stan = 5;
+                                             poz += 1;
+                                            }
+                             else if(tasma[poz] == 8){
+                                          tasma[poz] = 8;
+                                          stan = 6;
+                                          poz += 1;
+                                          }
+                            }
+                else if(stan==6)
+                            break;
+//wypisywanie fragmentow
+        for(k=0; k<m+n+3; k++){
+
+            if(k==poz){
+                printf("(q%d)", stan);
+                cd(tasma, k, m, n);
+                break;
+            }
+            if(tasma[k]==8)
+                printf("B");
+            else
+                printf("%d",tasma[k]);
+        }
+
+        if(stan!=6)
+            next();
+    }
+    //zliczanie zer:
+    for(i=0;i<m+n+2;i++){
+            if(tasma[i]==0)
+                s++;
+    }
+
+    printf("\n\nWynik: %d.",s);
+
+
+    return 0;
+}
+
+void opis(){
+    printf("Maszyna Turniga\n\n");
+    printf("Opis MT:\n\n");
+    printf("M=({q0, q1, q2, q3, q4, q5, q6}, {0, 1}, {0, 1, B}, g, q0, B, 0)\n\n");
+    printf("dla:\n");
+    printf("_______________________________________\n");
+    printf("|    |          |          |          |\n");
+    printf("| g  |    0     |    1     |    B     |\n");
+    printf("|____|__________|__________|__________|\n");
+    printf("|    |          |          |          |\n");
+    printf("| q0 | (q1,B,P) | (q5,B,P) |    -     |\n");
+    printf("|____|__________|__________|__________|\n");
+    printf("|    |          |          |          |\n");
+    printf("| q1 | (q1,0,P) | (q2,1,P) |    -     |\n");
+    printf("|____|__________|__________|__________|\n");
+    printf("|    |          |          |          |\n");
+    printf("| q2 | (q3,1,L) | (q2,1,P) | (q4,B,L) |\n");
+    printf("|____|__________|__________|__________|\n");
+    printf("|    |          |          |          |\n");
+    printf("| q3 | (q3,0,L) | (q3,1,L) | (q0,B,P) |\n");
+    printf("|____|__________|__________|__________|\n");
+    printf("|    |          |          |          |\n");
+    printf("| q4 | (q4,0,L) | (q4,B,L) | (q6,0,P) |\n");
+    printf("|____|__________|__________|__________|\n");
+    printf("|    |          |          |          |\n");
+    printf("| q5 | (q5,B,P) | (q5,B,P) | (q6,B,P) |\n");
+    printf("|____|__________|__________|__________|\n");
+    printf("|    |          |          |          |\n");
+    printf("| q6 |    -     |    -     |    -     |\n");
+    printf("|____|__________|__________|__________|\n");
+}
+
+void next(){
+    printf(" |   \n");
+}
+
+void cd(int v[], int z, int m, int n){
+    int k;
+    for(k=z; k<m+n+1; k++){
+        if(v[k]!=8)
+            printf("%d",v[k]);
+        }
+}
+
+
+
+
